@@ -31,6 +31,12 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
+	if message.startswith(f"{C['prefix']}reloadconfig") and message.author.id in owners:  # hidden from help command
+		try:
+			with open("config.yml", "r") as r:
+				C = yaml.load(r.read(), Loader=yaml.FullLoader)
+		except FileNotFoundError:
+			CRASH("No config.yml, please copy and rename config-example.yml and fill in the appropriate values.")
     await bot.process_commands(message)
 
 @bot.command(brief="Bot info")
@@ -40,7 +46,6 @@ async def info(ctx):
 	if "donate" in C and C["donate"]: # looks weird, basically checks if there is a donate value, and its not blank
 		embed.add_field(name="Donate", value=f"[Click me!]({C['donate']})")
 	await ctx.send(embed=embed)
-
 
 @bot.command(brief="Tells you info about a political ideology", description="Uses polcompball wiki to give you information about poliical ideologies.")
 async def whatis(ctx, *, ideology:str):
