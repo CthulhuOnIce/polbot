@@ -78,7 +78,8 @@ async def whatis(ctx, *, ideology:str):
 
 	for section in article_json["sections"]:
 		embed=discord.Embed(title=section["title"], url=article_json["url"], description="\u200b")
-		embed.set_thumbnail(url=article_json["thumbnail"])
+		if article_json["thumbnail"]:
+			embed.set_thumbnail(url=article_json["thumbnail"])
 		if section["level"] == 1: # title page
 			bod = generate_body_from_section(section)
 			add_body_to_embed(embed, bod, section["title"])
