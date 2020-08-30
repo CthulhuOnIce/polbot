@@ -31,12 +31,15 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-	if message.startswith(f"{C['prefix']}reloadconfig") and message.author.id in owners:  # hidden from help command
+	global C
+	if message.content.startswith(f"{C['prefix']}reloadconfig") and message.author.id in C["owners"]:  # hidden from help command
 		try:
 			with open("config.yml", "r") as r:
 				C = yaml.load(r.read(), Loader=yaml.FullLoader)
 		except FileNotFoundError:
 			CRASH("No config.yml, please copy and rename config-example.yml and fill in the appropriate values.")
+		await message.channel.send("Reloaded.")
+		return
 	await bot.process_commands(message)
 
 @bot.command(brief="Bot info")
