@@ -37,6 +37,8 @@ async def on_message(message):
 async def info(ctx):
 	embed = discord.Embed(title=C["name"], description=C["description"])
 	embed.add_field(name="Guilds", value=len(bot.guilds))
+	if "donate" in C and C["donate"]: # looks weird, basically checks if there is a donate value, and its not blank
+		embed.add_field("Donate", value=f"[Click me!]({C['donate']})")
 	await ctx.send(embed=embed)
 
 
