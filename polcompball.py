@@ -1,7 +1,7 @@
 import requests
 import sumy
 
-BLACKLISTEDSECTIONS = ["how to draw", "gallery", "animations"]
+BLACKLISTEDSECTIONS = ["gallery", "animations"]
 
 def get_article_json(name):
 	name = name.title().replace(" ", "_")
@@ -13,6 +13,7 @@ def get_article_json(name):
 	j = requests.get(f"https://polcompball.fandom.com/api/v1/Articles/AsSimpleJson?id={identity}").json()
 	j["thumbnail"] = djson["thumbnail"]
 	j["title"] = djson["title"]
+	j["abstract"] = djson["abstract"]
 	j["url"] = f"https://polcompball.fandom.com/wiki/{name}"
 	return j
 

@@ -5,6 +5,7 @@ import pickle
 from threading import Thread
 import asyncio
 import polcompball as pol
+from disputils import BotEmbedPaginator, BotConfirmation, BotMultipleChoice
 
 C = {}
 
@@ -15,6 +16,23 @@ def CRASH(message):
 
 def wrap(s, w): # s = source, w = length
     return [s[i:i + w] for i in range(0, len(s), w)]
+
+def generate_body_from_section(section):
+	body = ""
+	for content in section["content"]:
+		if content["type"] == "paragraph":
+			body += f"{content['text']}\n"
+		if content["type"] == "list":
+			for element in content["elements"]:
+				body += f" - {element['text']}\n"
+	return body
+
+def add_body_to_embed(embed, body, firsttitle):
+	splitbody = wrap(body, 1024)
+	for i in range(len(splitbody)):
+		embed.add_field(name=(firsttitle if i == 0 else "\u200b"), value=splitbody[i], inline=False)
+	return embed
+			
 
 try:
 	with open("config.yml", "r") as r:
@@ -56,30 +74,35 @@ async def whatis(ctx, *, ideology:str):
 	if not article_json:
 		await ctx.send("Couldn't find that ideology!")
 		return
-	embed = discord.Embed(title=article_json["title"], description="\u200b", url=article_json["url"])
-	if(article_json["thumbnail"]):
-		embed.set_thumbnail(url=article_json["thumbnail"])
+	embeds = []
+
 	for section in article_json["sections"]:
-		if not len(section["content"]):
-			embed.add_field(name=section["title"], value="-----------------------")
-		else:
-			body = ""
-			for p in section["content"]:
-				if p["type"] == "paragraph":
-					body += f"{p['text']}\n"
-				if p["type"] == "list":
-					for element in p["elements"]:
-						body += f" - {element['text']}\n"
-			if len(body) > 1024: # cut off
-				wrapped = wrap(body, 1024)
-				for i in range(len(wrapped)):
-					if i == 0:
-						embed.add_field(name=section["title"], value=wrapped[i], inline=False)
-					else:
-						embed.add_field(name='\u200b', value=wrapped[i], inline=False)
+		embed=discord.Embed(title=section["title"], url=article_json["url"], description="\u200b")
+		embed.set_thumbnail(url=article_json["thumbnail"])
+		if section["level"] == 1: # title page
+			bod = generate_body_from_section(section)
+			add_body_to_embed(embed, bod, section["title"])
+		else: # section header or small paragraph
+			if(len(section["content"])):
+				bod = generate_body_from_section(section)
+				add_body_to_embed(embed, bod, section["title"])
 			else:
-				embed.add_field(name=section["title"], value=body, inline=False)
-	embed.set_footer(text=f"Requested by {ctx.author.name}#{ctx.author.discriminator}")
-	await ctx.send(embed=embed)
+				bodylength = 0
+				found = False
+				for section2 in article_json["sections"][:]:
+					if bodylength > 5500:
+						break
+					if found:
+						if section2["level"] <= section["level"]:
+							break
+						bod = generate_body_from_section(section2)
+						bodylength += len(bod)
+						add_body_to_embed(embed, bod, section2["title"])
+						article_json["sections"].remove(section2)
+					elif section2 == section:
+						found = True
+		embeds.append(embed)
+	paginator = BotEmbedPaginator(ctx, embeds)
+	await paginator.run()
 
 bot.run(C["token"])  # Where 'TOKEN' is your bot token
