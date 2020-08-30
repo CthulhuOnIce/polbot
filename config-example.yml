@@ -1,2 +1,6 @@
+name: PolBot
+description: Funny haha political ideology bot
 token: "BOT TOKEN HERE"
 prefix: ">"
+owners:
+  - 291321148715696138

@@ -33,7 +33,14 @@ async def on_ready():
 async def on_message(message):
     await bot.process_commands(message)
 
-@bot.command()
+@bot.command(brief="Bot info")
+async def info(ctx):
+	embed = discord.Embed(title=C["name"], description=C["description"])
+	embed.add_field(name="Guilds", value=len(bot.guilds))
+	await ctx.send(embed=embed)
+
+
+@bot.command(brief="Tells you info about a political ideology", description="Uses polcompball wiki to give you information about poliical ideologies.")
 async def whatis(ctx, *, ideology:str):
 	article_json = pol.trim_article_json(pol.get_article_json(ideology))
 	if not article_json:
@@ -62,6 +69,7 @@ async def whatis(ctx, *, ideology:str):
 						embed.add_field(name='\u200b', value=wrapped[i], inline=False)
 			else:
 				embed.add_field(name=section["title"], value=body, inline=False)
+	embed.set_footer(text=f"Requested by {ctx.author.name}#{ctx.author.discriminator}")
 	await ctx.send(embed=embed)
 
 bot.run(C["token"])  # Where 'TOKEN' is your bot token
