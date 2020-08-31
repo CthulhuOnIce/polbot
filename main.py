@@ -63,13 +63,13 @@ async def on_message(message):
 @bot.command(brief="Bot info")
 async def info(ctx):
 	embed = discord.Embed(title=C["name"], description=C["description"])
-	embed.add_field(name="Guilds", value=len(bot.guilds))
+	embed.add_field(name="Guilds", value=len(bot.guilds), inline=False)
 	if "donate" in C and C["donate"]: # looks weird, basically checks if there is a donate value, and its not blank
-		embed.add_field(name="Donate", value=f"[Click me!]({C['donate']})")
+		embed.add_field(name="Donate", value=f"[Click me!]({C['donate']})", inline=False)
 	if "source" in C and C["source"]:
-		embed.add_field(name="Source Code", value=f"[Click me!]({C['source']})")
+		embed.add_field(name="Source Code", value=f"[Click me!]({C['source']})", inline=False)
 	if "invite" in C and C["invite"]:
-		embed.add_field(name="Invite me to your server", value=f"[Click me!]({C['invite']})")
+		embed.add_field(name="Invite me to your server", value=f"[Click me!]({C['invite']})", inline=False)
 	await ctx.send(embed=embed)
 
 @bot.command(brief="Tells you info about a political ideology", description="Uses polcompball wiki to give you information about poliical ideologies.")
