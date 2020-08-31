@@ -66,6 +66,10 @@ async def info(ctx):
 	embed.add_field(name="Guilds", value=len(bot.guilds))
 	if "donate" in C and C["donate"]: # looks weird, basically checks if there is a donate value, and its not blank
 		embed.add_field(name="Donate", value=f"[Click me!]({C['donate']})")
+	if "source" in C and C["source"]:
+		embed.add_field(name="Source Code", value=f"[Click me!]({C['source']})")
+	if "invite" in C and C["invite"]:
+		embed.add_field(name="Invite me to your server", value=f"[Click me!]({C['invite']})")
 	await ctx.send(embed=embed)
 
 @bot.command(brief="Tells you info about a political ideology", description="Uses polcompball wiki to give you information about poliical ideologies.")
