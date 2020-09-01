@@ -27,8 +27,8 @@ class QDrop:
 	pubDate = None
 	def __init__(self, rss=None):
 		if not rss:		return
-		self.link = rss["link"]
-		self.pubDate = rss["pubDate"]
+		self.link = rss["href"]
+		self.pubDate = rss["published"]
 		text = rss2markdown(rss["summary"])
 		# extract image, convert html links to markdown
 		matches = re.findall(IMAGEFINDPATTERN, text)
