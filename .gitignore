@@ -1,6 +1,9 @@
 # config
 config.yml
 
+# cache
+QAnonCache.p
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

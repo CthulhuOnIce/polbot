@@ -6,6 +6,8 @@ from threading import Thread
 import asyncio
 import polcompball as pol
 from disputils import BotEmbedPaginator, BotConfirmation, BotMultipleChoice
+import qanon as Q
+import feedparser
 
 C = {}
 
@@ -32,6 +34,10 @@ def add_body_to_embed(embed, body, firsttitle):
 	for i in range(len(splitbody)):
 		embed.add_field(name=(firsttitle if i == 0 else "\u200b"), value=splitbody[i], inline=False)
 	return embed
+
+def rss2discord(message):
+	message = message.replace("<br />", "\n")
+	return message
 			
 
 try:
@@ -42,6 +48,8 @@ except FileNotFoundError:
 
 
 bot = commands.Bot(command_prefix=C["prefix"])
+
+Thread(target=Q.check_loop, args=(bot.loop,)).start()  # handles new qanon "drops"
 
 @bot.event
 async def on_ready():
@@ -59,6 +67,30 @@ async def on_message(message):
 		await message.channel.send("Reloaded.")
 		return
 	await bot.process_commands(message)
+
+@bot.command(brief="Display last 10 updates from QAnon RSS feed")
+async def qanon(ctx):
+	embeds = []
+	for i in range(10):
+		drop = Q.DROPCACHE[i]
+		embed=discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00)
+		if drop.imageurl:
+			embed.set_thumbnail(url=drop.imageurl) 
+		add_body_to_embed(embed, drop.body, "\u200b")
+		# embed.add_field(name=undefined, value=undefined, inline=False)
+		embeds.append(embed)
+	paginator = BotEmbedPaginator(ctx, embeds)
+	await paginator.run()
+
+@bot.command(brief="Retrieve specific Q 'drop'")
+async def qdrop(ctx, dropnum:int):
+	if dropnum <= 0 or dropnum >= len(Q.DROPCACHE)+1:
+		await ctx.send(f"Number must be between 0 and {len(Q.DROPCACHE)}")
+		return
+	drop = Q.DROPCACHE[len(Q.DROPCACHE)-dropnum]
+	embed = discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00)
+	add_body_to_embed(embed, drop.body, "\u200b")
+	await ctx.send(embed=embed)
 
 @bot.command(brief="Bot info")
 async def info(ctx):
