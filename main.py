@@ -89,6 +89,8 @@ async def qdrop(ctx, dropnum:int):
 		return
 	drop = Q.DROPCACHE[len(Q.DROPCACHE)-dropnum]
 	embed = discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00)
+	if drop.imageurl:
+		embed.set_thumbnail(url=drop.imageurl) 
 	add_body_to_embed(embed, drop.body, "\u200b")
 	await ctx.send(embed=embed)
 
