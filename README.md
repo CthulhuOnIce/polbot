@@ -13,3 +13,8 @@
  - Get the last 10 QAnon "drops"
  - Get QAnon "drop" by number
  - Search QAnon drops for terms
+ 
+### Demos:
+![](https://kev.vagina.guru/0InkAl.png)
+![](https://kev.vagina.guru/5pH8LT.png)
+![](https://kev.vagina.guru/KlfBIi.png)
