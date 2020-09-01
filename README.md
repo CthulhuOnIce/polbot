@@ -12,3 +12,4 @@
  - Get the definitions of political ideologies: (Sourced from polcompball wiki)
  - Get the last 10 QAnon "drops"
  - Get QAnon "drop" by number
+ - Search QAnon drops for terms
