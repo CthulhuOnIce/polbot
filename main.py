@@ -45,6 +45,7 @@ def qdrop2embed(drop):
 		embed.set_thumbnail(url=drop.imageurl) 
 	add_body_to_embed(embed, drop.body, "\u200b")
 	embed.set_footer(text=drop.pubDate)
+	return embed
 
 try:
 	with open("config.yml", "r") as r:
