@@ -38,7 +38,13 @@ def add_body_to_embed(embed, body, firsttitle):
 def rss2discord(message):
 	message = message.replace("<br />", "\n")
 	return message
-			
+
+def qdrop2embed(drop):
+	embed=discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00, url=drop.link)
+	if drop.imageurl:
+		embed.set_thumbnail(url=drop.imageurl) 
+	add_body_to_embed(embed, drop.body, "\u200b")
+	embed.set_footer(text=drop.pubDate)
 
 try:
 	with open("config.yml", "r") as r:
@@ -124,12 +130,7 @@ async def qanon(ctx):
 	embeds = []
 	for i in range(10):
 		drop = Q.DROPCACHE[i]
-		embed=discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00)
-		if drop.imageurl:
-			embed.set_thumbnail(url=drop.imageurl) 
-		add_body_to_embed(embed, drop.body, "\u200b")
-		# embed.add_field(name=undefined, value=undefined, inline=False)
-		embeds.append(embed)
+		embeds.append(qdrop2embed(drop))
 	paginator = BotEmbedPaginator(ctx, embeds)
 	await paginator.run()
 
@@ -139,11 +140,7 @@ async def qdrop(ctx, dropnum:int):
 		await ctx.send(f"Number must be between 0 and {len(Q.DROPCACHE)}")
 		return
 	drop = Q.DROPCACHE[len(Q.DROPCACHE)-dropnum]
-	embed = discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00)
-	if drop.imageurl:
-		embed.set_thumbnail(url=drop.imageurl) 
-	add_body_to_embed(embed, drop.body, "\u200b")
-	await ctx.send(embed=embed)
+	await ctx.send(embed=qdrop2embed(drop))
 				      
 @bot.command(brief="Search QAnon 'Drops' for term")
 async def qsearch(ctx, *, term:str):
@@ -151,11 +148,7 @@ async def qsearch(ctx, *, term:str):
 	term = term.lower()
 	for drop in Q.DROPCACHE:
 		if term in drop.title.lower() or term in drop.body.lower():
-			embed = discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00)
-			if drop.imageurl:
-				embed.set_thumbnail(url=drop.imageurl) 	
-			add_body_to_embed(embed, drop.body, "\u200b")
-			embeds.append(embed)
+			embeds.append(qdrop2embed(drop))
 	if len(embeds):
 		paginator = BotEmbedPaginator(ctx, embeds)
 		await paginator.run()
