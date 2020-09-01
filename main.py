@@ -53,7 +53,8 @@ Thread(target=Q.check_loop, args=(bot.loop,)).start()  # handles new qanon "drop
 
 @bot.event
 async def on_ready():
-    print("Ready to go.")
+	await bot.change_presence(activity=discord.Game(name='>help'))
+	print("Ready to go.")
 
 @bot.event
 async def on_message(message):
