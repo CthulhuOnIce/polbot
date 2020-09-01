@@ -68,32 +68,6 @@ async def on_message(message):
 		return
 	await bot.process_commands(message)
 
-@bot.command(brief="Display last 10 updates from QAnon RSS feed")
-async def qanon(ctx):
-	embeds = []
-	for i in range(10):
-		drop = Q.DROPCACHE[i]
-		embed=discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00)
-		if drop.imageurl:
-			embed.set_thumbnail(url=drop.imageurl) 
-		add_body_to_embed(embed, drop.body, "\u200b")
-		# embed.add_field(name=undefined, value=undefined, inline=False)
-		embeds.append(embed)
-	paginator = BotEmbedPaginator(ctx, embeds)
-	await paginator.run()
-
-@bot.command(brief="Retrieve specific Q 'drop'")
-async def qdrop(ctx, dropnum:int):
-	if dropnum <= 0 or dropnum >= len(Q.DROPCACHE)+1:
-		await ctx.send(f"Number must be between 0 and {len(Q.DROPCACHE)}")
-		return
-	drop = Q.DROPCACHE[len(Q.DROPCACHE)-dropnum]
-	embed = discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00)
-	if drop.imageurl:
-		embed.set_thumbnail(url=drop.imageurl) 
-	add_body_to_embed(embed, drop.body, "\u200b")
-	await ctx.send(embed=embed)
-
 @bot.command(brief="Bot info")
 async def info(ctx):
 	embed = discord.Embed(title=C["name"], description=C["description"])
@@ -143,5 +117,48 @@ async def whatis(ctx, *, ideology:str):
 		embeds.append(embed)
 	paginator = BotEmbedPaginator(ctx, embeds)
 	await paginator.run()
+						
+@bot.command(brief="Display last 10 updates from QAnon RSS feed")
+async def qanon(ctx):
+	embeds = []
+	for i in range(10):
+		drop = Q.DROPCACHE[i]
+		embed=discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00)
+		if drop.imageurl:
+			embed.set_thumbnail(url=drop.imageurl) 
+		add_body_to_embed(embed, drop.body, "\u200b")
+		# embed.add_field(name=undefined, value=undefined, inline=False)
+		embeds.append(embed)
+	paginator = BotEmbedPaginator(ctx, embeds)
+	await paginator.run()
+
+@bot.command(brief="Retrieve specific Q 'drop'")
+async def qdrop(ctx, dropnum:int):
+	if dropnum <= 0 or dropnum >= len(Q.DROPCACHE)+1:
+		await ctx.send(f"Number must be between 0 and {len(Q.DROPCACHE)}")
+		return
+	drop = Q.DROPCACHE[len(Q.DROPCACHE)-dropnum]
+	embed = discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00)
+	if drop.imageurl:
+		embed.set_thumbnail(url=drop.imageurl) 
+	add_body_to_embed(embed, drop.body, "\u200b")
+	await ctx.send(embed=embed)
+				      
+@bot.command(brief="Search QAnon 'Drops' for term")
+async def qsearch(ctx, *, term:str):
+	embeds = []
+	term = term.lower()
+	for drop in Q.DROPCACHE:
+		if term in drop.title.lower() or term in drop.body.lower():
+			embed = discord.Embed(title=drop.title, description="\u200b", color=0x1f4d00)
+			if drop.imageurl:
+				embed.set_thumbnail(url=drop.imageurl) 	
+			add_body_to_embed(embed, drop.body, "\u200b")
+			embeds.append(embed)
+	if len(embeds):
+		paginator = BotEmbedPaginator(ctx, embeds)
+		await paginator.run()
+	else:
+		await ctx.send("No drops found.")
 
 bot.run(C["token"])  # Where 'TOKEN' is your bot token
