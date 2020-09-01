@@ -15,6 +15,7 @@ def rss2markdown(rss):
 	rss = rss.replace("<br />\n", "\n")
 	rss = rss.replace("<strong>", "**")
 	rss = rss.replace("</strong>", "**")
+	rss = rss.replace("&#09;", "  ")
 	rss = re.sub(LINKREPLACEPATTERN, r"[\2](\1)", rss)
 	return rss
 
