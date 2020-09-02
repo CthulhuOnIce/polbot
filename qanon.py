@@ -56,28 +56,20 @@ def check_loop(botloop):
 	while True:
 		time.sleep(5)
 		feed = feedparser.parse(STANDARDFEED).entries
-		NEWLASTDROP = feed[0]
-		if NEWLASTDROP == LASTDROP.rss:		continue  # no new thing
-		new_ones = []
-		found = False
+		if feed[0]["title"] == LASTDROP.rss["title"]:	continue
+		new_drops = []
 		for entry in feed:
-			if entry["title"] == LASTDROP.rss["title"]:  # for some reason if entry == title doesnt work
-				found = True
+			if entry["title"] == LASTDROP.rss["title"]:
 				break
-			new_ones.append(QDrop(entry))
-		if found:
-			LASTDROP = QDrop(NEWLASTDROP)
-			for entry in new_ones:
-				DROPCACHE.append(entry)
-		else:
-			print("QAnon cache too outdated, rebuilding...")
+			new_drops.append(QDrop(entry))
+		if len(new_drops) == len(feed):
 			DROPCACHE = []
 			DROPCACHENEW = feedparser.parse(ALLDROPS).entries
 			for entry in DROPCACHENEW:	DROPCACHE.append(QDrop(entry))
 			LASTDROP = DROPCACHE[0]
-			print("QAnon cache updated.")
-			exit()
-
+		else:
+			DROPCACHE = new_drops + DROPCACHE
+			LASTDROP = DROPCACHE[0]
 		pickle.dump(DROPCACHE, open("QAnonCache.p", "wb"))
 
 
