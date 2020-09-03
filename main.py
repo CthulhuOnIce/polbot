@@ -9,6 +9,7 @@ from disputils import BotEmbedPaginator, BotConfirmation, BotMultipleChoice
 import qanon as Q
 import feedparser
 import requests
+import factcheck as fc
 
 C = {}
 
@@ -61,7 +62,7 @@ Thread(target=Q.check_loop, args=(bot.loop,)).start()  # handles new qanon "drop
 
 @bot.event
 async def on_ready():
-	await bot.change_presence(activity=discord.Game(name='>help'))
+	await bot.change_presence(activity=discord.Game(name=f'{C["prefix"]}help'))
 	print("Ready to go.")
 
 @bot.event
@@ -160,5 +161,25 @@ async def qsearch(ctx, *, term:str):
 @bot.command(brief="Generate political compass")
 async def polcompass(ctx, ec:float, soc:float):
 	await ctx.send(f"https://www.politicalcompass.org/chart?ec={ec}&soc={soc}")	
+
+@bot.command(brief="Fact check a claim via query")
+async def factcheck(ctx, *, claim:str):
+	if not "factcheckapikey" in C or not C["factcheckapikey"]:
+		await ctx.send("Fact check API key not set.")
+		return
+	results = fc.factcheck(claim, C["factcheckapikey"])
+	if results == {}:
+		await ctx.send("No results found!")
+		return
+	embeds = []
+	for claim in results["claims"]:
+		embed = discord.Embed(title=claim["claiment"] if "claiment" in claim else "Claim:", description=claim["text"])
+		if "claimDate" in claim:
+			embed.set_footer(text=claim["claimDate"])
+		for review in claim["claimReview"]:
+			embed.add_field(name=f"Review: {review['publisher']['name']}", value=f"{review['textualRating']}\n*([Source]({review['url']}))*")
+		embeds.append(embed)
+	paginator = BotEmbedPaginator(ctx, embeds)
+	await paginator.run()
 
 bot.run(C["token"])  # Where 'TOKEN' is your bot token
