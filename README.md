@@ -13,6 +13,7 @@
  - Get the last 10 QAnon "drops"
  - Get QAnon "drop" by number
  - Search QAnon drops for terms
+ - Create political compass image
  
 ### Demos:
 ![](https://kev.vagina.guru/0InkAl.png)
