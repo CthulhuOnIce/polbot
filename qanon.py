@@ -55,22 +55,24 @@ def check_loop(botloop):
 	global DROPCACHE
 	while True:
 		time.sleep(5)
-		feed = feedparser.parse(STANDARDFEED).entries
-		if feed[0]["title"] == LASTDROP.rss["title"]:	continue
-		new_drops = []
-		for entry in feed:
-			if entry["title"] == LASTDROP.rss["title"]:
-				break
-			new_drops.append(QDrop(entry))
-		if len(new_drops) == len(feed):
-			DROPCACHE = []
-			DROPCACHENEW = feedparser.parse(ALLDROPS).entries
-			for entry in DROPCACHENEW:	DROPCACHE.append(QDrop(entry))
-			LASTDROP = DROPCACHE[0]
-		else:
-			DROPCACHE = new_drops + DROPCACHE
-			LASTDROP = DROPCACHE[0]
-		pickle.dump(DROPCACHE, open("QAnonCache.p", "wb"))
-
+		try:
+			feed = feedparser.parse(STANDARDFEED).entries
+			if feed[0]["title"] == LASTDROP.rss["title"]:	continue
+			new_drops = []
+			for entry in feed:
+				if entry["title"] == LASTDROP.rss["title"]:
+					break
+				new_drops.append(QDrop(entry))
+			if len(new_drops) == len(feed):
+				DROPCACHE = []
+				DROPCACHENEW = feedparser.parse(ALLDROPS).entries
+				for entry in DROPCACHENEW:	DROPCACHE.append(QDrop(entry))
+				LASTDROP = DROPCACHE[0]
+			else:
+				DROPCACHE = new_drops + DROPCACHE
+				LASTDROP = DROPCACHE[0]
+			pickle.dump(DROPCACHE, open("QAnonCache.p", "wb"))
+		except Exception as e:
+			print(f"QAnon Loop Error: {e}")
 
 	
