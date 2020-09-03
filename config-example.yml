@@ -1,6 +1,7 @@
 name: PolBot
 description: Funny haha political ideology bot
 token: "BOT TOKEN HERE"
+factcheckapikey: API KEY HERE  # api key for google's fact check api
 prefix: ">"
 owners:
   - 291321148715696138

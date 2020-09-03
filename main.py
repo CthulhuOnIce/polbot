@@ -177,7 +177,7 @@ async def factcheck(ctx, *, claim:str):
 		if "claimDate" in claim:
 			embed.set_footer(text=claim["claimDate"])
 		for review in claim["claimReview"]:
-			embed.add_field(name=f"Review: {review['publisher']['name']}", value=f"{review['textualRating']}\n*([Source]({review['url']}))*")
+			embed.add_field(name=f"Review: {review['publisher']['name'] if 'name' in review['publisher'] else review['publisher']}", value=f"{review['textualRating']}\n*([Source]({review['url']}))*")
 		embeds.append(embed)
 	paginator = BotEmbedPaginator(ctx, embeds)
 	await paginator.run()
