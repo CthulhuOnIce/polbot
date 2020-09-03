@@ -8,6 +8,7 @@ import polcompball as pol
 from disputils import BotEmbedPaginator, BotConfirmation, BotMultipleChoice
 import qanon as Q
 import feedparser
+import requests
 
 C = {}
 
@@ -155,5 +156,9 @@ async def qsearch(ctx, *, term:str):
 		await paginator.run()
 	else:
 		await ctx.send("No drops found.")
+				      
+@bot.command(brief="Generate political compass")
+async def polcompass(ctx, ec:float, soc:float):
+	await ctx.send(f"https://www.politicalcompass.org/chart?ec={ec}&soc={soc}")	
 
 bot.run(C["token"])  # Where 'TOKEN' is your bot token
