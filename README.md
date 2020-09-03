@@ -14,8 +14,10 @@
  - Get QAnon "drop" by number
  - Search QAnon drops for terms
  - Create political compass image
+ - Fact check claims
  
 ### Demos:
+![](https://kev.vagina.guru/JrrA8Q.png)
 ![](https://kev.vagina.guru/0InkAl.png)
 ![](https://kev.vagina.guru/5pH8LT.png)
 ![](https://kev.vagina.guru/KlfBIi.png)
